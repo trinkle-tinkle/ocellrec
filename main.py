@@ -38,14 +38,18 @@ def main():
                 stream.record_audio_stream(STREAM_URL, output_dir=f"{OUTPUT_DIR}/{dir_name}/{temp_file_name}.mp3")
 
                 # Check file size to know if it recorded something
-                temp_file_size = os.path.getsize(f"{OUTPUT_DIR}/{dir_name}/{temp_file_name}.mp3")
+                try:
+                    temp_file_size = os.path.getsize(f"{OUTPUT_DIR}/{dir_name}/{temp_file_name}.mp3")
 
-                if temp_file_size > MIN_FILE_SIZE:
-                    # succeed. rename.
-                    pass
-                else:
-                    # not succeeded
-                    pass
+                    if temp_file_size > MIN_FILE_SIZE:
+                        # succeed. rename.
+                        pass
+                    else:
+                        # not succeeded
+                        pass
+                except:
+                    print("file not found")
+
 
                 # Create txt file with info?
                 print("Waiting...")
