@@ -12,3 +12,7 @@ TRY_END_REC = "23:59"
 # Delay between attempts to record in seconds.
 REC_DELAY = 60
 CHECK_EVENT_DELAY = 600
+
+# Log
+PRINT_TO_TERMINAL = True
+SAVE_TO_FILE = True # Save to log.txt

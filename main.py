@@ -6,8 +6,10 @@ import os
 from datetime import datetime
 import re
 from config import *
+from log import log
 
 def main():
+    log("Running...")
     while True:
         date_today = datetime.today().strftime('%Y-%m-%d')
         
@@ -15,18 +17,17 @@ def main():
         event_title = event["title"]
         event_dates = event["dates"]
 
-        # check if next event is today. else, wait more time???
         if is_now_in_timeslot(dates_list=event_dates, start_time_str=TRY_START_REC, end_time_str=TRY_END_REC):
-            print(f"Next event: {event_title}")
+            log(f"Ready to record next event: {event_title}")
 
             dir_name = f"{date_today} - {event_title}"
             dir_name = clean_filename(dir_name)
 
             try:
                 os.makedirs(f"{OUTPUT_DIR}/{dir_name}", exist_ok=True)
-                print(f"Directory '{dir_name}' created successfully.")
+                log(f"Directory '{dir_name}' created successfully.")
             except Exception as e:
-                print(f"An error occurred: {e}")
+                log(message=f"{e}", msg_type="ERROR")
 
             events.save_next_event_file(event=event, event_dir=dir_name)
 
@@ -37,7 +38,6 @@ def main():
             else:
                 stream.record_audio_stream(STREAM_URL, output_dir=f"{OUTPUT_DIR}/{dir_name}/{temp_file_name}.mp3")
 
-                # Check file size to know if it recorded something
                 try:
                     temp_file_size = os.path.getsize(f"{OUTPUT_DIR}/{dir_name}/{temp_file_name}.mp3")
 
@@ -48,15 +48,15 @@ def main():
                         # not succeeded
                         pass
                 except:
-                    print("file not found")
+                    log(message="file not found", msg_type="ERROR")
 
 
                 # Create txt file with info?
-                print("Waiting...")
+                log("Waiting...")
                 time.sleep(REC_DELAY)
                 
         else:
-            print(f"No events soon. Next event: {event_title} on {event_dates}")
+            log(message=f"No events soon. Next event: {event_title} on {event_dates}")
             time.sleep(CHECK_EVENT_DELAY)
 
 
@@ -65,7 +65,6 @@ def clean_filename(name, replacement="_") -> str:
 
 def is_now_in_timeslot(dates_list: list[str], start_time_str: str, end_time_str: str) -> bool:
     """
-    
     Parameters:
         dates_list (list[str]): List of dates in 'YYYY-MM-DD' format
             e.g. ['2025-10-26', '2025-10-27']
